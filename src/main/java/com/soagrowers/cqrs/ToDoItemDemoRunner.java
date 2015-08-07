@@ -52,7 +52,6 @@ public class ToDoItemDemoRunner {
         // Instantiate a simple EventBus (this will propagate events to event handlers)
         EventBus eventBus = new SimpleEventBus();
 
-
         // Wire the EventStore and the EventBus together to provide an 'Aggregate Repository' for ToDoItem's
         EventSourcingRepository repository = new EventSourcingRepository(ToDoItem.class, eventStore);
         repository.setEventBus(eventBus);
@@ -65,7 +64,7 @@ public class ToDoItemDemoRunner {
         AggregateAnnotationCommandHandler.subscribe(ToDoItem.class, repository, commandBus);
 
         // Register an additional EventListener with Axon...
-        // AnnotationEventListenerAdapter.subscribe(new ToDoEventConsoleLoggingHandler(), eventBus);
+        AnnotationEventListenerAdapter.subscribe(new ToDoEventConsoleLoggingHandler(), eventBus);
 
         /**
          * Now lets Demonstrate Commands triggering events and Events being dealt with
@@ -80,7 +79,6 @@ public class ToDoItemDemoRunner {
         System.out.println("Command: 'CreateToDoItem' sending...");
         commandGateway.send(newToDoItemCommand);
         System.out.println("Now look in the event store ('./events/ToDoItem).");
-//        Thread.sleep(10000);
 
         /**
          * OUTCOMES...
@@ -97,10 +95,9 @@ public class ToDoItemDemoRunner {
          * Now lets re-load the Aggregate from the Repository...
          */
 
-        System.out.println("Lets re-load the aggregate from the store...");
+        System.out.println("Let's re-load the aggregate from the store...");
         loadAggregate(repository, toDoItemId);
         System.out.println("Notice how the event was 're-applied' to the aggregate by the repository");
-//        Thread.sleep(10000);
 
         /**
          * The console shows the state of the aggregate once the known events have been re-applied.
@@ -116,7 +113,6 @@ public class ToDoItemDemoRunner {
         System.out.println("Second Command > 'MarkCompleted'");
         System.out.println("Command: 'MarkCompleted' sending...");
         commandGateway.send(completedToDoItemCommand);
-//        Thread.sleep(10000);
 
         /**
          * OUTCOMES...
