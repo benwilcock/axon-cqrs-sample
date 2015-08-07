@@ -28,10 +28,11 @@ import java.util.UUID;
  */
 public class ToDoItemDemoRunner {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
 
         /**
-         * SetUp COMMAND Handling Infrastucture
+         * First things first, lets setup some basic COMMAND Handling infrastucture
+         * using Axon...
          */
 
         // To start with, instantiate a simple CommandBus and EventBus
@@ -42,7 +43,7 @@ public class ToDoItemDemoRunner {
 
 
         /**
-         * SetUp EVENT Handling Infrastucture
+         * Next, lets setup some EVENT Handling and EVENT Storage infrastructure...
          */
 
         // Instantiate an EventStore (this will write events out the the file system)
@@ -51,19 +52,20 @@ public class ToDoItemDemoRunner {
         // Instantiate a simple EventBus (this will propagate events to event handlers)
         EventBus eventBus = new SimpleEventBus();
 
-        /**
-         * SetUp an AGGREGATE REPOSITORY (combines an EVENT BUS and an EVENT STORE)
-         */
 
-        // Wire EventStore and EventBus to provide an 'Aggregate Repository' for ToDoItem's
+        // Wire the EventStore and the EventBus together to provide an 'Aggregate Repository' for ToDoItem's
         EventSourcingRepository repository = new EventSourcingRepository(ToDoItem.class, eventStore);
         repository.setEventBus(eventBus);
+
+        /**
+         * Finally, lets add some Command and Event subscribers to the Buses (a.k.a handlers)
+         */
 
         // Axon needs to know that our ToDoItem Aggregate can handle 'commands'
         AggregateAnnotationCommandHandler.subscribe(ToDoItem.class, repository, commandBus);
 
-        // Register an EventListener with Axon...
-        AnnotationEventListenerAdapter.subscribe(new ToDoEventConsoleLoggingHandler(), eventBus);
+        // Register an additional EventListener with Axon...
+        // AnnotationEventListenerAdapter.subscribe(new ToDoEventConsoleLoggingHandler(), eventBus);
 
         /**
          * Now lets Demonstrate Commands triggering events and Events being dealt with
@@ -74,8 +76,11 @@ public class ToDoItemDemoRunner {
 
         // Create a ToDoItem by sending a COMMAND to the CommandGateway...
         CreateToDoItemCommand newToDoItemCommand = new CreateToDoItemCommand(toDoItemId, "Buy milk.");
+        System.out.println("First Command > 'CreateToDoItem'");
+        System.out.println("Command: 'CreateToDoItem' sending...");
         commandGateway.send(newToDoItemCommand);
-
+        System.out.println("Now look in the event store ('./events/ToDoItem).");
+        Thread.sleep(5000);
 
         /**
          * OUTCOMES...
@@ -92,7 +97,10 @@ public class ToDoItemDemoRunner {
          * Now lets re-load the Aggregate from the Repository...
          */
 
+        System.out.println("Lets re-load the aggregate from the store...");
         loadAggregate(repository, toDoItemId);
+        System.out.println("Notice how the event was 're-applied' to the aggregate by the repository");
+        Thread.sleep(5000);
 
         /**
          * The console shows the state of the aggregate once the known events have been re-applied.
@@ -105,7 +113,10 @@ public class ToDoItemDemoRunner {
          */
 
         MarkCompletedCommand completedToDoItemCommand = new MarkCompletedCommand(toDoItemId);
+        System.out.println("Second Command > 'MarkCompleted'");
+        System.out.println("Command: 'MarkCompleted' sending...");
         commandGateway.send(completedToDoItemCommand);
+        Thread.sleep(5000);
 
         /**
          * OUTCOMES...
@@ -123,7 +134,10 @@ public class ToDoItemDemoRunner {
          * Now lets re-load the Aggregate from the Repository...
          */
 
+        System.out.println("Re-load the aggregate a second time...");
         loadAggregate(repository, toDoItemId);
+        System.out.println("This time 2 events were 're-applied' to the aggregate by the repository");
+        System.out.println("and it's state becomes 'completed'.");
 
         /**
          * The console now shows the final state of the aggregate once the Created an MarkCompleted
@@ -138,14 +152,14 @@ public class ToDoItemDemoRunner {
 
     private static void loadAggregate(EventSourcingRepository repository, String toDoItemId) {
 
-        System.out.println("\n---- Loading ToDoItem Aggregate with Id: " + toDoItemId + "----");
+        System.out.println("\n------------------- EVENT REPOSITORY LOAD -----------------------");
+        System.out.println("Loading Aggregate 'ToDoItem' with Id: " + toDoItemId);
+        System.out.println("Events Re-applied...");
         UnitOfWork unitOfWork = new DefaultUnitOfWorkFactory().createUnitOfWork();
-        ToDoItem item = (ToDoItem)repository.load(toDoItemId);
+        ToDoItem item = (ToDoItem) repository.load(toDoItemId);
         unitOfWork.commit();
-
-        System.out.println("ToDoItem (" + item.getId() + ")");
-        System.out.println("Description: " + item.getDescription());
-        System.out.println("Complete: " + item.isComplete() + "\n");
-
+        System.out.println("Loaded Aggregate...");
+        System.out.println("ToDoItem (" + item.getId() + ") " + "'" + item.getDescription() + "' " + "Complete?: " + item.isComplete());
+        System.out.println("----------------------------------------------------------------\n");
     }
 }

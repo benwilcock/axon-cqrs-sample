@@ -25,7 +25,8 @@ public class ToDoItem extends AbstractAnnotatedAggregateRoot {
 
     @CommandHandler
     public ToDoItem(CreateToDoItemCommand command){
-        System.out.println("CreateToDoItemCommand received");
+        System.out.println("Command: 'CreateToDoItem' received.");
+        System.out.println("Event: 'ToDoItemCreated' applying...");
         apply(new ToDoItemCreatedEvent(command.getTodoId(), command.getDescription()));
     }
 
@@ -33,17 +34,20 @@ public class ToDoItem extends AbstractAnnotatedAggregateRoot {
     public void on(ToDoItemCreatedEvent event){
         this.id = event.getTodoId();
         this.description = event.getDescription();
+        System.out.println("Event: 'ToDoItemCreated' '" + event.getDescription() + "' (" + event.getTodoId() + ") applied.");
     }
 
     @CommandHandler
     public void markCompleted(MarkCompletedCommand command){
-        System.out.println("MarkCompletedCommand received");
+        System.out.println("Command: 'MarkCompleted' received.");
+        System.out.println("Event: 'ToDoItemCompleted' applying...");
         apply(new ToDoItemCompletedEvent(id));
     }
 
     @EventHandler
     public void on(ToDoItemCompletedEvent event){
         this.isComplete = true;
+        System.out.println("Event: 'ToDoItemCompleted' " + this.getDescription() + " (completed = " + this.isComplete + ") applied.");
     }
 
     public String getId() {
