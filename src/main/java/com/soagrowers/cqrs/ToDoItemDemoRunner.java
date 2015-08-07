@@ -80,7 +80,7 @@ public class ToDoItemDemoRunner {
         System.out.println("Command: 'CreateToDoItem' sending...");
         commandGateway.send(newToDoItemCommand);
         System.out.println("Now look in the event store ('./events/ToDoItem).");
-        Thread.sleep(5000);
+//        Thread.sleep(10000);
 
         /**
          * OUTCOMES...
@@ -100,7 +100,7 @@ public class ToDoItemDemoRunner {
         System.out.println("Lets re-load the aggregate from the store...");
         loadAggregate(repository, toDoItemId);
         System.out.println("Notice how the event was 're-applied' to the aggregate by the repository");
-        Thread.sleep(5000);
+//        Thread.sleep(10000);
 
         /**
          * The console shows the state of the aggregate once the known events have been re-applied.
@@ -116,7 +116,7 @@ public class ToDoItemDemoRunner {
         System.out.println("Second Command > 'MarkCompleted'");
         System.out.println("Command: 'MarkCompleted' sending...");
         commandGateway.send(completedToDoItemCommand);
-        Thread.sleep(5000);
+//        Thread.sleep(10000);
 
         /**
          * OUTCOMES...
