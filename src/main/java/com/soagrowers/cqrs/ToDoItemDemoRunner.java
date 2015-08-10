@@ -1,30 +1,17 @@
 package com.soagrowers.cqrs;
 
-import com.mongodb.Mongo;
 import com.soagrowers.cqrs.commands.CreateToDoItemCommand;
 import com.soagrowers.cqrs.commands.MarkCompletedCommand;
-import com.soagrowers.cqrs.eventhandlers.ToDoEventConsoleLoggingHandler;
-import com.soagrowers.cqrs.eventhandlers.ToDoMaterialViewManager;
 import com.soagrowers.cqrs.views.MaterialView;
 import org.axonframework.commandhandling.CommandBus;
-import org.axonframework.commandhandling.SimpleCommandBus;
-import org.axonframework.commandhandling.annotation.AggregateAnnotationCommandHandler;
 import org.axonframework.commandhandling.gateway.CommandGateway;
-import org.axonframework.commandhandling.gateway.DefaultCommandGateway;
 import org.axonframework.eventhandling.EventBus;
-import org.axonframework.eventhandling.SimpleEventBus;
-import org.axonframework.eventhandling.annotation.AnnotationEventListenerAdapter;
 import org.axonframework.eventsourcing.EventSourcingRepository;
-import org.axonframework.eventstore.EventStore;
-import org.axonframework.eventstore.fs.FileSystemEventStore;
-import org.axonframework.eventstore.fs.SimpleEventFileResolver;
-import org.axonframework.eventstore.mongo.DefaultMongoTemplate;
-import org.axonframework.eventstore.mongo.MongoEventStore;
 import org.axonframework.unitofwork.DefaultUnitOfWorkFactory;
 import org.axonframework.unitofwork.UnitOfWork;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import java.io.File;
-import java.net.UnknownHostException;
 import java.util.UUID;
 
 /**
@@ -32,7 +19,7 @@ import java.util.UUID;
  */
 public class ToDoItemDemoRunner {
 
-    private static final String MONGO_HOST = "127.0.0.1";
+    private static final String MONGO_HOST = "server07";
     private static final Integer MONGO_PORT = 27017;
     private static final String MONGO_CQRS_DB = "cqrs";
     private static final String MONGO_EVENTS_COLLECTION = "events";
@@ -40,56 +27,38 @@ public class ToDoItemDemoRunner {
     private static final String MONGO_USERNAME = "";
     private static final char[] MONGO_PASSWORD = new char[0];
 
+    private static CommandBus commandBus;
+    private static EventBus eventBus;
+    private static CommandGateway commandGateway;
+    private static EventSourcingRepository<ToDoItem> repository;
 
-    public static void main(String[] args) throws InterruptedException {
 
-        /**
-         * First things first, lets setup some basic COMMAND Handling infrastucture
-         * using Axon...
-         */
+    public ToDoItemDemoRunner() {
+    }
 
-        // To start with, instantiate a simple CommandBus and EventBus
-        CommandBus commandBus = new SimpleCommandBus();
+    public static void main(String[] args) {
 
-        // The command gateway simplifies working with the CommandBus
-        CommandGateway commandGateway = new DefaultCommandGateway(commandBus);
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("sampleContext.xml");
 
-        /**
-         * Next, lets setup some EVENT Handling and EVENT Storage infrastructure...
-         */
+        commandBus = (CommandBus) applicationContext.getBean("commandBus");
+        commandGateway = applicationContext.getBean(CommandGateway.class);
+        eventBus = (EventBus) applicationContext.getBean("eventBus");
+        repository = (EventSourcingRepository<ToDoItem>) applicationContext.getBean("toDoRepository");
 
-        // Instantiate a Mongo EventStore
-        Mongo mongo = null;
-        try {
-            mongo = new Mongo(MONGO_HOST, MONGO_PORT);
-        } catch (UnknownHostException e) {
-            throw new RuntimeException(e);
-        }
+        ToDoItemDemoRunner runner = new ToDoItemDemoRunner();
+        runner.run();
+    }
 
-        // Clear down database from previous runs.
-        mongo.getDB(MONGO_CQRS_DB).getCollection(MONGO_EVENTS_COLLECTION).drop();
-        mongo.getDB(MONGO_CQRS_DB).getCollection(MONGO_SNAPSHOTS_COLLECTION).drop();
-
-        EventStore eventStore = new MongoEventStore(new DefaultMongoTemplate(mongo, MONGO_CQRS_DB, MONGO_EVENTS_COLLECTION, MONGO_SNAPSHOTS_COLLECTION, MONGO_USERNAME, MONGO_PASSWORD));
-
-        // Instantiate a simple EventBus (this will propagate events to event handlers)
-        EventBus eventBus = new SimpleEventBus();
-
-        // Wire the EventStore and the EventBus together to provide an 'Aggregate Repository' for ToDoItem's
-        EventSourcingRepository repository = new EventSourcingRepository(ToDoItem.class, eventStore);
-        repository.setEventBus(eventBus);
+    public void run() {
 
         /**
          * Finally, lets add some Command and Event subscribers to the Buses (a.k.a handlers)
          */
 
-        // Axon needs to know that our ToDoItem Aggregate can handle 'commands'
-        AggregateAnnotationCommandHandler.subscribe(ToDoItem.class, repository, commandBus);
-
         // Register our EventListener's with Axon...
-        AnnotationEventListenerAdapter.subscribe(new ToDoEventConsoleLoggingHandler(), eventBus);
+        //AnnotationEventListenerAdapter.subscribe(new ToDoEventConsoleLoggingHandler(), eventBus);
         // For example: And event listener that updates a material view could be added.
-        AnnotationEventListenerAdapter.subscribe(new ToDoMaterialViewManager(), eventBus);
+        //AnnotationEventListenerAdapter.subscribe(new ToDoMaterialViewManager(), eventBus);
 
         /**
          * Now lets Demonstrate Commands triggering events and Events being dealt with

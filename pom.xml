@@ -13,11 +13,21 @@
     <project.axon.version>2.4.2</project.axon.version>
     <slf4j.version>1.7.5</slf4j.version>
     <log4j.version>1.2.17</log4j.version>
-    <spring.version>4.0.3.RELEASE</spring.version>
+    <project.spring.version>4.0.3.RELEASE</project.spring.version>
     <rabbitmq.version>3.2.3</rabbitmq.version>
   </properties>
 
   <dependencies>
+    <dependency>
+      <groupId>org.springframework.data</groupId>
+      <artifactId>spring-data-mongodb</artifactId>
+      <version>1.7.2.RELEASE</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <version>${project.spring.version}</version>
+    </dependency>
     <dependency>
       <groupId>${project.axon.group}</groupId>
       <artifactId>axon-core</artifactId>
