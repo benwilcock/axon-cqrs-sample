@@ -1,4 +1,4 @@
-package com.soagrowers.cqrs;
+package com.soagrowers.cqrs.views;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -30,19 +30,17 @@ public class MaterialView {
     }
 
     public void dumpView(){
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
 
         buf.append("--- Start Material View ---\n");
         buf.append("ToDoItems: \n");
-        for (Iterator iterator = toDoItems.keySet().iterator(); iterator.hasNext(); ) {
-            String id =  (String)iterator.next();
+        for (String id : toDoItems.keySet()) {
             String desc = toDoItems.get(id);
             buf.append("Id: " + id + ", Desc: " + desc);
         }
 
         buf.append("\nDoneItems: \n");
-        for (Iterator iterator = doneItems.keySet().iterator(); iterator.hasNext(); ) {
-            String id =  (String)iterator.next();
+        for (String id : doneItems.keySet()) {
             String desc = doneItems.get(id);
             buf.append("Id: " + id + ", Desc: " + desc);
         }

@@ -4,6 +4,7 @@ import com.soagrowers.cqrs.commands.CreateToDoItemCommand;
 import com.soagrowers.cqrs.commands.MarkCompletedCommand;
 import com.soagrowers.cqrs.eventhandlers.ToDoEventConsoleLoggingHandler;
 import com.soagrowers.cqrs.eventhandlers.ToDoMaterialViewManager;
+import com.soagrowers.cqrs.views.MaterialView;
 import org.axonframework.commandhandling.CommandBus;
 import org.axonframework.commandhandling.SimpleCommandBus;
 import org.axonframework.commandhandling.annotation.AggregateAnnotationCommandHandler;

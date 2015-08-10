@@ -1,6 +1,6 @@
 package com.soagrowers.cqrs.eventhandlers;
 
-import com.soagrowers.cqrs.MaterialView;
+import com.soagrowers.cqrs.views.MaterialView;
 import com.soagrowers.cqrs.events.ToDoItemCompletedEvent;
 import com.soagrowers.cqrs.events.ToDoItemCreatedEvent;
 import org.axonframework.eventhandling.annotation.EventHandler;
