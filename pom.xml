@@ -30,6 +30,11 @@
     </dependency>
     <dependency>
       <groupId>${project.axon.group}</groupId>
+      <artifactId>axon-mongo</artifactId>
+      <version>${project.axon.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.axon.group}</groupId>
       <artifactId>axon-test</artifactId>
       <version>${project.axon.version}</version>
       <scope>test</scope>

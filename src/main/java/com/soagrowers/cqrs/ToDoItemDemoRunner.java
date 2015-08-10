@@ -1,5 +1,6 @@
 package com.soagrowers.cqrs;
 
+import com.mongodb.Mongo;
 import com.soagrowers.cqrs.commands.CreateToDoItemCommand;
 import com.soagrowers.cqrs.commands.MarkCompletedCommand;
 import com.soagrowers.cqrs.eventhandlers.ToDoEventConsoleLoggingHandler;
@@ -17,16 +18,28 @@ import org.axonframework.eventsourcing.EventSourcingRepository;
 import org.axonframework.eventstore.EventStore;
 import org.axonframework.eventstore.fs.FileSystemEventStore;
 import org.axonframework.eventstore.fs.SimpleEventFileResolver;
+import org.axonframework.eventstore.mongo.DefaultMongoTemplate;
+import org.axonframework.eventstore.mongo.MongoEventStore;
 import org.axonframework.unitofwork.DefaultUnitOfWorkFactory;
 import org.axonframework.unitofwork.UnitOfWork;
 
 import java.io.File;
+import java.net.UnknownHostException;
 import java.util.UUID;
 
 /**
  * Created by Ben on 07/08/2015.
  */
 public class ToDoItemDemoRunner {
+
+    private static final String MONGO_HOST = "127.0.0.1";
+    private static final Integer MONGO_PORT = 27017;
+    private static final String MONGO_CQRS_DB = "cqrs";
+    private static final String MONGO_EVENTS_COLLECTION = "events";
+    private static final String MONGO_SNAPSHOTS_COLLECTION = "snapshots";
+    private static final String MONGO_USERNAME = "";
+    private static final char[] MONGO_PASSWORD = new char[0];
+
 
     public static void main(String[] args) throws InterruptedException {
 
@@ -45,8 +58,19 @@ public class ToDoItemDemoRunner {
          * Next, lets setup some EVENT Handling and EVENT Storage infrastructure...
          */
 
-        // Instantiate an EventStore (this will write events out the the file system)
-        EventStore eventStore = new FileSystemEventStore(new SimpleEventFileResolver(new File("./events")));
+        // Instantiate a Mongo EventStore
+        Mongo mongo = null;
+        try {
+            mongo = new Mongo(MONGO_HOST, MONGO_PORT);
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        }
+
+        // Clear down database from previous runsChang.
+        mongo.getDB(MONGO_CQRS_DB).getCollection(MONGO_EVENTS_COLLECTION).drop();
+        mongo.getDB(MONGO_CQRS_DB).getCollection(MONGO_SNAPSHOTS_COLLECTION).drop();
+
+        EventStore eventStore = new MongoEventStore(new DefaultMongoTemplate(mongo, MONGO_CQRS_DB, MONGO_EVENTS_COLLECTION, MONGO_SNAPSHOTS_COLLECTION, MONGO_USERNAME, MONGO_PASSWORD));
 
         // Instantiate a simple EventBus (this will propagate events to event handlers)
         EventBus eventBus = new SimpleEventBus();
