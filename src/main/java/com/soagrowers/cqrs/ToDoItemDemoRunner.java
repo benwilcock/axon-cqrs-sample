@@ -66,7 +66,7 @@ public class ToDoItemDemoRunner {
             throw new RuntimeException(e);
         }
 
-        // Clear down database from previous runsChang.
+        // Clear down database from previous runs.
         mongo.getDB(MONGO_CQRS_DB).getCollection(MONGO_EVENTS_COLLECTION).drop();
         mongo.getDB(MONGO_CQRS_DB).getCollection(MONGO_SNAPSHOTS_COLLECTION).drop();
 
