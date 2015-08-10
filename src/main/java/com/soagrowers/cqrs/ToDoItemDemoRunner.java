@@ -41,7 +41,6 @@ public class ToDoItemDemoRunner {
         // The command gateway simplifies working with the CommandBus
         CommandGateway commandGateway = new DefaultCommandGateway(commandBus);
 
-
         /**
          * Next, lets setup some EVENT Handling and EVENT Storage infrastructure...
          */
