@@ -2,7 +2,8 @@ package com.soagrowers.cqrs;
 
 import com.soagrowers.cqrs.commands.CreateToDoItemCommand;
 import com.soagrowers.cqrs.commands.MarkCompletedCommand;
-import com.soagrowers.cqrs.events.handlers.ToDoEventConsoleLoggingHandler;
+import com.soagrowers.cqrs.eventhandlers.ToDoEventConsoleLoggingHandler;
+import com.soagrowers.cqrs.eventhandlers.ToDoMaterialViewManager;
 import org.axonframework.commandhandling.CommandBus;
 import org.axonframework.commandhandling.SimpleCommandBus;
 import org.axonframework.commandhandling.annotation.AggregateAnnotationCommandHandler;
@@ -15,10 +16,8 @@ import org.axonframework.eventsourcing.EventSourcingRepository;
 import org.axonframework.eventstore.EventStore;
 import org.axonframework.eventstore.fs.FileSystemEventStore;
 import org.axonframework.eventstore.fs.SimpleEventFileResolver;
-import org.axonframework.unitofwork.CurrentUnitOfWork;
 import org.axonframework.unitofwork.DefaultUnitOfWorkFactory;
 import org.axonframework.unitofwork.UnitOfWork;
-import org.axonframework.unitofwork.UnitOfWorkFactory;
 
 import java.io.File;
 import java.util.UUID;
@@ -63,8 +62,10 @@ public class ToDoItemDemoRunner {
         // Axon needs to know that our ToDoItem Aggregate can handle 'commands'
         AggregateAnnotationCommandHandler.subscribe(ToDoItem.class, repository, commandBus);
 
-        // Register an additional EventListener with Axon...
+        // Register our EventListener's with Axon...
         AnnotationEventListenerAdapter.subscribe(new ToDoEventConsoleLoggingHandler(), eventBus);
+        // For example: And event listener that updates a material view could be added.
+        AnnotationEventListenerAdapter.subscribe(new ToDoMaterialViewManager(), eventBus);
 
         /**
          * Now lets Demonstrate Commands triggering events and Events being dealt with
@@ -79,6 +80,7 @@ public class ToDoItemDemoRunner {
         System.out.println("Command: 'CreateToDoItem' sending...");
         commandGateway.send(newToDoItemCommand);
         System.out.println("Now look in the event store ('./events/ToDoItem).");
+        MaterialView.getInstance().dumpView();
 
         /**
          * OUTCOMES...
@@ -113,6 +115,7 @@ public class ToDoItemDemoRunner {
         System.out.println("Second Command > 'MarkCompleted'");
         System.out.println("Command: 'MarkCompleted' sending...");
         commandGateway.send(completedToDoItemCommand);
+        MaterialView.getInstance().dumpView();
 
         /**
          * OUTCOMES...
