@@ -1,0 +1,42 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:axon="http://www.axonframework.org/schema/core"
+       xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.axonframework.org/schema/core http://www.axonframework.org/schema/axon-core-2.0.xsd
+                           http://www.springframework.org/schema/data/mongo
+                           http://www.springframework.org/schema/data/mongo/spring-mongo-1.0.xsd">
+
+    <axon:command-bus id="commandBus"/>
+
+    <axon:event-bus id="eventBus"/>
+
+    <axon:event-sourcing-repository id="toDoRepository"
+                                    aggregate-type="com.soagrowers.cqrs.ToDoItem"
+                                    event-bus="eventBus"/>
+
+    <axon:aggregate-command-handler id="toDoItemHandler"
+                                    aggregate-type="com.soagrowers.cqrs.ToDoItem"
+                                    repository="toDoRepository"
+                                    command-bus="commandBus"/>
+
+    <mongo:mongo host="server07" port="27017" />
+    <mongo:db-factory dbname="cqrs" />
+
+    <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+        <constructor-arg ref="mongoDbFactory" />
+    </bean>
+
+    <bean id="eventStore" class="org.axonframework.eventstore.mongo.MongoEventStore">
+        <constructor-arg ref="mongoTemplate"/>
+    </bean>
+
+    <bean class="org.axonframework.commandhandling.gateway.CommandGatewayFactoryBean">
+        <property name="commandBus" ref="commandBus"/>
+    </bean>
+
+    <axon:annotation-config />
+    <bean class="com.soagrowers.cqrs.eventhandlers.ToDoMaterialViewManager"/>
+    <bean class="com.soagrowers.cqrs.eventhandlers.ToDoEventConsoleLoggingHandler"/>
+
+</beans>
