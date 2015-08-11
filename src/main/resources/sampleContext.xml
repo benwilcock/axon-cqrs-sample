@@ -39,7 +39,7 @@
         <property name="connectionFactory" ref="amqpConnectionFactory" />
     </bean>
 
-    <bean id="serializer" class="org.axonframework.serializer.json.JacksonSerializer" />
+    <bean id="serializer" class="org.axonframework.serializer.xml.XStreamSerializer" />
 
     <axon:command-bus id="commandBus"/>
     <axon:event-bus id="eventBus" terminal="terminal" />
