@@ -14,22 +14,22 @@
 
     <rabbit:connection-factory id="amqpConnectionFactory" host="server10" virtual-host="/"/>
     <rabbit:template id="amqpTemplate" connection-factory="amqpConnectionFactory"/>
-    <rabbit:admin connection-factory="amqpConnectionFactory"/>
-    <rabbit:queue id="eventBusQueue" name="Axon.EventBus.Default" durable="true" auto-delete="false"/>
-    <rabbit:fanout-exchange id="eventBusExchange" name="Axon.EventBus">
+    <!--<rabbit:admin connection-factory="amqpConnectionFactory"/>-->
+    <rabbit:queue id="eventBusQueue" name="poc.eventstore.vrn.register.default" durable="true" auto-delete="false"/>
+    <rabbit:fanout-exchange id="eventBusExchange" name="poc.eventstore.vrn.register">
         <rabbit:bindings>
             <rabbit:binding queue="eventBusQueue" />
         </rabbit:bindings>
     </rabbit:fanout-exchange>
 
-    <axon-amqp:terminal id="terminal" exchange-name="Axon.EventBus" connection-factory="amqpConnectionFactory" serializer="serializer" transactional="true" >
+    <axon-amqp:terminal id="terminal" exchange-name="poc.eventstore.vrn.register" connection-factory="amqpConnectionFactory" serializer="serializer" transactional="true" >
         <axon-amqp:default-configuration transaction-manager="transactionManager" transaction-size="25" prefetch="200" />
     </axon-amqp:terminal>
 
     <axon:cluster id="defaultCluster" default="true" >
         <axon:meta-data>
             <entry key="AMQP.Config">
-                <axon-amqp:configuration transaction-size="20000" queue-name="Axon.EventBus.Default" exclusive="false" />
+                <axon-amqp:configuration transaction-size="20000" queue-name="poc.eventstore.vrn.register.default" exclusive="false" />
             </entry>
         </axon:meta-data>
     </axon:cluster>
@@ -39,7 +39,7 @@
         <property name="connectionFactory" ref="amqpConnectionFactory" />
     </bean>
 
-    <bean id="serializer" class="org.axonframework.serializer.xml.XStreamSerializer" />
+    <bean id="serializer" class="org.axonframework.serializer.json.JacksonSerializer" />
 
     <axon:command-bus id="commandBus"/>
     <axon:event-bus id="eventBus" terminal="terminal" />
