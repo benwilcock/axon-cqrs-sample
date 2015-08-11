@@ -14,7 +14,6 @@ public class TestRunner {
     private static ConnectionFactory connectionFactory;
     private static AmqpTemplate template;
 
-
     public static void main(String[] args) {
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext("testContext.xml");
         connectionFactory = (ConnectionFactory) applicationContext.getBean("amqpConnectionFactory");
