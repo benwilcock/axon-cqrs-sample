@@ -10,6 +10,7 @@ import org.axonframework.eventsourcing.EventSourcingRepository;
 import org.axonframework.unitofwork.DefaultUnitOfWorkFactory;
 import org.axonframework.unitofwork.UnitOfWork;
 import org.springframework.amqp.core.AmqpTemplate;
+import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.context.ApplicationContext;
@@ -38,18 +39,13 @@ public class TestRunner {
     private static AmqpTemplate template;
 
 
-    public TestRunner() {
-    }
-
     public static void main(String[] args) {
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext("testContext.xml");
         connectionFactory = (ConnectionFactory)applicationContext.getBean("amqpConnectionFactory");
         template = (AmqpTemplate)applicationContext.getBean("amqpTemplate");
-        TestRunner runner = new TestRunner();
-        runner.run();
-    }
-
-    public void run() {
         template.convertAndSend("Ben.Temp.Queue", "foo");
+        ((CachingConnectionFactory)connectionFactory).destroy();
+        System.out.println("done.");
+        //System.exit();
     }
 }

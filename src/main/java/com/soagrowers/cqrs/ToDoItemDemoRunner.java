@@ -9,10 +9,12 @@ import org.axonframework.eventhandling.EventBus;
 import org.axonframework.eventsourcing.EventSourcingRepository;
 import org.axonframework.unitofwork.DefaultUnitOfWorkFactory;
 import org.axonframework.unitofwork.UnitOfWork;
+import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Ben on 07/08/2015.
@@ -36,7 +38,7 @@ public class ToDoItemDemoRunner {
     public ToDoItemDemoRunner() {
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
 
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext("sampleContext.xml");
 
@@ -47,6 +49,9 @@ public class ToDoItemDemoRunner {
 
         ToDoItemDemoRunner runner = new ToDoItemDemoRunner();
         runner.run();
+
+        TimeUnit.SECONDS.sleep(1l);
+        System.exit(0);
     }
 
     public void run() {
