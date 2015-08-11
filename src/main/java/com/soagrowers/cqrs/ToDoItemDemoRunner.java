@@ -3,13 +3,10 @@ package com.soagrowers.cqrs;
 import com.soagrowers.cqrs.commands.CreateToDoItemCommand;
 import com.soagrowers.cqrs.commands.MarkCompletedCommand;
 import com.soagrowers.cqrs.views.MaterialView;
-import org.axonframework.commandhandling.CommandBus;
 import org.axonframework.commandhandling.gateway.CommandGateway;
-import org.axonframework.eventhandling.EventBus;
 import org.axonframework.eventsourcing.EventSourcingRepository;
 import org.axonframework.unitofwork.DefaultUnitOfWorkFactory;
 import org.axonframework.unitofwork.UnitOfWork;
-import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -21,30 +18,16 @@ import java.util.concurrent.TimeUnit;
  */
 public class ToDoItemDemoRunner {
 
-    private static final String MONGO_HOST = "server07";
-    private static final Integer MONGO_PORT = 27017;
-    private static final String MONGO_CQRS_DB = "cqrs";
-    private static final String MONGO_EVENTS_COLLECTION = "events";
-    private static final String MONGO_SNAPSHOTS_COLLECTION = "snapshots";
-    private static final String MONGO_USERNAME = "";
-    private static final char[] MONGO_PASSWORD = new char[0];
-
-    private static CommandBus commandBus;
-    private static EventBus eventBus;
     private static CommandGateway commandGateway;
     private static EventSourcingRepository<ToDoItem> repository;
 
 
-    public ToDoItemDemoRunner() {
-    }
+    public ToDoItemDemoRunner() {}
 
     public static void main(String[] args) throws InterruptedException {
 
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext("sampleContext.xml");
-
-        commandBus = (CommandBus) applicationContext.getBean("commandBus");
         commandGateway = applicationContext.getBean(CommandGateway.class);
-        eventBus = (EventBus) applicationContext.getBean("eventBus");
         repository = (EventSourcingRepository<ToDoItem>) applicationContext.getBean("toDoRepository");
 
         ToDoItemDemoRunner runner = new ToDoItemDemoRunner();
