@@ -19,6 +19,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.springframework.amqp</groupId>
+      <artifactId>spring-rabbit</artifactId>
+      <version>1.4.5.RELEASE</version>
+    </dependency>
+    <dependency>
       <groupId>org.springframework.data</groupId>
       <artifactId>spring-data-mongodb</artifactId>
       <version>1.7.2.RELEASE</version>
@@ -41,6 +46,11 @@
     <dependency>
       <groupId>${project.axon.group}</groupId>
       <artifactId>axon-mongo</artifactId>
+      <version>${project.axon.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.axon.group}</groupId>
+      <artifactId>axon-amqp</artifactId>
       <version>${project.axon.version}</version>
     </dependency>
     <dependency>

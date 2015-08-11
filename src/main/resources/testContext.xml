@@ -1,0 +1,29 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:axon="http://www.axonframework.org/schema/core"
+       xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+       xmlns:axon-amqp="http://www.axonframework.org/schema/amqp"
+       xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.axonframework.org/schema/core http://www.axonframework.org/schema/axon-core-2.0.xsd
+                           http://www.springframework.org/schema/data/mongo
+                           http://www.springframework.org/schema/data/mongo/spring-mongo-1.0.xsd
+                           http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit-1.0.xsd
+                           http://www.axonframework.org/schema/amqp http://www.axonframework.org/schema/axon-amqp.xsd
+                           ">
+
+    <rabbit:connection-factory id="amqpConnectionFactory"
+                               host="10.0.233.41"
+                               username="test"
+                               password="password"/>
+
+    <rabbit:template id="amqpTemplate" connection-factory="amqpConnectionFactory"/>
+    <rabbit:admin connection-factory="amqpConnectionFactory"/>
+    <rabbit:fanout-exchange id="eventBusExchange" name="Axon.EventBus">
+        <rabbit:bindings>
+            <rabbit:binding queue="eventBusQueue" />
+        </rabbit:bindings>
+    </rabbit:fanout-exchange>
+    <rabbit:queue id="eventBusQueue" name="Axon.EventBus.Default" durable="true" auto-delete="false"/>
+
+</beans>

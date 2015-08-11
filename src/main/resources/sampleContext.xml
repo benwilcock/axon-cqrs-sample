@@ -1,19 +1,56 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:axon="http://www.axonframework.org/schema/core"
+       xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+       xmlns:axon-amqp="http://www.axonframework.org/schema/amqp"
        xmlns:mongo="http://www.springframework.org/schema/data/mongo"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
                            http://www.axonframework.org/schema/core http://www.axonframework.org/schema/axon-core-2.0.xsd
                            http://www.springframework.org/schema/data/mongo
-                           http://www.springframework.org/schema/data/mongo/spring-mongo-1.0.xsd">
+                           http://www.springframework.org/schema/data/mongo/spring-mongo-1.0.xsd
+                           http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit-1.0.xsd
+                           http://www.axonframework.org/schema/amqp http://www.axonframework.org/schema/axon-amqp.xsd
+                           ">
+
+    <rabbit:connection-factory id="amqpConnectionFactory"
+                               host="192.168.1.182"
+                               username="test"
+                               password="password"/>
+    <rabbit:template id="amqpTemplate" connection-factory="amqpConnectionFactory"/>
+    <rabbit:admin connection-factory="amqpConnectionFactory"/>
+    <rabbit:queue id="eventBusQueue" name="Axon.EventBus.Default" durable="true" auto-delete="false"/>
+    <rabbit:fanout-exchange id="eventBusExchange" name="Axon.EventBus">
+        <rabbit:bindings>
+            <rabbit:binding queue="eventBusQueue" />
+        </rabbit:bindings>
+    </rabbit:fanout-exchange>
+
+    <axon-amqp:terminal id="terminal" exchange-name="Axon.EventBus" connection-factory="amqpConnectionFactory" serializer="serializer" transactional="true" >
+        <axon-amqp:default-configuration transaction-manager="transactionManager" transaction-size="25" prefetch="200" />
+    </axon-amqp:terminal>
+
+    <axon:cluster id="defaultCluster" default="true" >
+        <axon:meta-data>
+            <entry key="AMQP.Config">
+                <axon-amqp:configuration transaction-size="20000" queue-name="Axon.EventBus.Default" exclusive="false" />
+            </entry>
+        </axon:meta-data>
+    </axon:cluster>
+
+    <bean id="transactionManager"
+          class="org.springframework.amqp.rabbit.transaction.RabbitTransactionManager">
+        <property name="connectionFactory" ref="amqpConnectionFactory" />
+    </bean>
+
+    <bean id="serializer" class="org.axonframework.serializer.xml.XStreamSerializer" />
 
     <axon:command-bus id="commandBus"/>
-
-    <axon:event-bus id="eventBus"/>
+    <axon:event-bus id="eventBus" terminal="terminal" />
 
     <axon:event-sourcing-repository id="toDoRepository"
                                     aggregate-type="com.soagrowers.cqrs.ToDoItem"
-                                    event-bus="eventBus"/>
+                                    event-bus="eventBus"
+                                    event-store="eventStore"/>
 
     <axon:aggregate-command-handler id="toDoItemHandler"
                                     aggregate-type="com.soagrowers.cqrs.ToDoItem"
@@ -44,8 +81,8 @@
         <property name="commandBus" ref="commandBus"/>
     </bean>
 
-    <axon:annotation-config />
+    <!--<axon:annotation-config />
     <bean class="com.soagrowers.cqrs.eventhandlers.ToDoMaterialViewManager"/>
-    <bean class="com.soagrowers.cqrs.eventhandlers.ToDoEventConsoleLoggingHandler"/>
+    <bean class="com.soagrowers.cqrs.eventhandlers.ToDoEventConsoleLoggingHandler"/>-->
 
 </beans>
