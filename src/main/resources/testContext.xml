@@ -12,18 +12,14 @@
                            http://www.axonframework.org/schema/amqp http://www.axonframework.org/schema/axon-amqp.xsd
                            ">
 
-    <rabbit:connection-factory id="amqpConnectionFactory"
-                               host="10.0.233.41"
-                               username="test"
-                               password="password"/>
-
+    <rabbit:connection-factory id="amqpConnectionFactory" host="server10" virtual-host="/"/>
     <rabbit:template id="amqpTemplate" connection-factory="amqpConnectionFactory"/>
     <rabbit:admin connection-factory="amqpConnectionFactory"/>
-    <rabbit:fanout-exchange id="eventBusExchange" name="Axon.EventBus">
-        <rabbit:bindings>
-            <rabbit:binding queue="eventBusQueue" />
-        </rabbit:bindings>
-    </rabbit:fanout-exchange>
-    <rabbit:queue id="eventBusQueue" name="Axon.EventBus.Default" durable="true" auto-delete="false"/>
+    <!--<rabbit:fanout-exchange id="eventBusExchange" name="Axon.EventBus">-->
+        <!--<rabbit:bindings>-->
+            <!--<rabbit:binding queue="eventBusQueue" />-->
+        <!--</rabbit:bindings>-->
+    <!--</rabbit:fanout-exchange>-->
+    <rabbit:queue id="eventBusQueue" name="Ben.Temp.Queue" durable="true" auto-delete="false"/>
 
 </beans>

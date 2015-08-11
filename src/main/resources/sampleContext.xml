@@ -12,10 +12,7 @@
                            http://www.axonframework.org/schema/amqp http://www.axonframework.org/schema/axon-amqp.xsd
                            ">
 
-    <rabbit:connection-factory id="amqpConnectionFactory"
-                               host="192.168.1.182"
-                               username="test"
-                               password="password"/>
+    <rabbit:connection-factory id="amqpConnectionFactory" host="server10" virtual-host="/"/>
     <rabbit:template id="amqpTemplate" connection-factory="amqpConnectionFactory"/>
     <rabbit:admin connection-factory="amqpConnectionFactory"/>
     <rabbit:queue id="eventBusQueue" name="Axon.EventBus.Default" durable="true" auto-delete="false"/>
@@ -81,8 +78,8 @@
         <property name="commandBus" ref="commandBus"/>
     </bean>
 
-    <!--<axon:annotation-config />
+    <axon:annotation-config />
     <bean class="com.soagrowers.cqrs.eventhandlers.ToDoMaterialViewManager"/>
-    <bean class="com.soagrowers.cqrs.eventhandlers.ToDoEventConsoleLoggingHandler"/>-->
+    <bean class="com.soagrowers.cqrs.eventhandlers.ToDoEventConsoleLoggingHandler"/>
 
 </beans>

@@ -50,6 +50,6 @@ public class TestRunner {
     }
 
     public void run() {
-        template.convertAndSend("myqueue", "foo");
+        template.convertAndSend("Ben.Temp.Queue", "foo");
     }
 }
