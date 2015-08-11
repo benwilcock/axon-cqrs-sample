@@ -27,8 +27,8 @@ import org.axonframework.eventsourcing.annotation.AggregateIdentifier;
  * Axon delivers commands placed on the bus to the Aggregate. Axon supports the 'applying' of
  * Events to the Aggregate, and the handling of those events by the aggregate or any other
  * configured EventHandlers.
- *
  */
+
 public class ToDoItem extends AbstractAnnotatedAggregateRoot {
 
     /**

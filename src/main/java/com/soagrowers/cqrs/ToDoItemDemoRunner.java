@@ -30,11 +30,17 @@ public class ToDoItemDemoRunner {
         commandGateway = applicationContext.getBean(CommandGateway.class);
         repository = (EventSourcingRepository<ToDoItem>) applicationContext.getBean("toDoRepository");
 
-        ToDoItemDemoRunner runner = new ToDoItemDemoRunner();
-        runner.run();
+        try {
+            ToDoItemDemoRunner runner = new ToDoItemDemoRunner();
+            runner.run();
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+        finally {
+            TimeUnit.SECONDS.sleep(1l);
+            System.exit(0);
+        }
 
-        TimeUnit.SECONDS.sleep(1l);
-        System.exit(0);
     }
 
     public void run() {
