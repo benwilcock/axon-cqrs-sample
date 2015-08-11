@@ -32,20 +32,20 @@ public class MaterialView {
     public void dumpView(){
         StringBuilder buf = new StringBuilder();
 
-        buf.append("--- Start Material View ---\n");
-        buf.append("ToDoItems: \n");
+        buf.append("--- Material View ---\n");
+        buf.append("ToDo Items: \n");
         for (String id : toDoItems.keySet()) {
             String desc = toDoItems.get(id);
             buf.append("Id: " + id + ", Desc: " + desc);
         }
 
-        buf.append("\nDoneItems: \n");
+        buf.append("\nDone Items: \n");
         for (String id : doneItems.keySet()) {
             String desc = doneItems.get(id);
             buf.append("Id: " + id + ", Desc: " + desc);
         }
 
-        buf.append("\n--- End Material View ---");
+        buf.append("\n---------------------");
 
         System.out.println(buf.toString());
     }

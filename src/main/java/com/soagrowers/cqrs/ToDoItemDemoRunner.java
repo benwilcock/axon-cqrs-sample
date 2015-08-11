@@ -40,16 +40,7 @@ public class ToDoItemDemoRunner {
     public void run() {
 
         /**
-         * Finally, lets add some Command and Event subscribers to the Buses (a.k.a handlers)
-         */
-
-        // Register our EventListener's with Axon...
-        //AnnotationEventListenerAdapter.subscribe(new ToDoEventConsoleLoggingHandler(), eventBus);
-        // For example: And event listener that updates a material view could be added.
-        //AnnotationEventListenerAdapter.subscribe(new ToDoMaterialViewManager(), eventBus);
-
-        /**
-         * Now lets Demonstrate Commands triggering events and Events being dealt with
+         * Lets Demonstrate Commands triggering events and Events being dealt with
          */
 
         // Create a unique id for our ToDoItem task...
@@ -57,11 +48,10 @@ public class ToDoItemDemoRunner {
 
         // Create a ToDoItem by sending a COMMAND to the CommandGateway...
         CreateToDoItemCommand newToDoItemCommand = new CreateToDoItemCommand(toDoItemId, "Buy milk.");
-        System.out.println("First Command > 'CreateToDoItem'");
+        System.out.println("Building 1st Command > 'CreateToDoItem'");
         System.out.println("Command: 'CreateToDoItem' sending...");
         commandGateway.send(newToDoItemCommand);
-        System.out.println("Now look in the event store ('./events/ToDoItem).");
-        MaterialView.getInstance().dumpView();
+
 
         /**
          * OUTCOMES...
@@ -82,6 +72,10 @@ public class ToDoItemDemoRunner {
         loadAggregate(repository, toDoItemId);
         System.out.println("Notice how the event was 're-applied' to the aggregate by the repository");
 
+        System.out.println("Now let's see the contents of the Material View");
+        MaterialView.getInstance().dumpView();
+        System.out.println("The view contains a new ToDo item. No items are 'Done'");
+
         /**
          * The console shows the state of the aggregate once the known events have been re-applied.
          *
@@ -93,10 +87,9 @@ public class ToDoItemDemoRunner {
          */
 
         MarkCompletedCommand completedToDoItemCommand = new MarkCompletedCommand(toDoItemId);
-        System.out.println("Second Command > 'MarkCompleted'");
+        System.out.println("Building 2nd Command > 'MarkCompleted'");
         System.out.println("Command: 'MarkCompleted' sending...");
         commandGateway.send(completedToDoItemCommand);
-        MaterialView.getInstance().dumpView();
 
         /**
          * OUTCOMES...
@@ -105,19 +98,22 @@ public class ToDoItemDemoRunner {
          * 2. The Event has been stored against the aggregateId
          * 3. The Event has been sent to the Event Listeners
          *
-         * Look in the file system ./events/ToDoItem folder. you should see a new event file with the ToDoItemId
+         * Look in the database, you should see a new record with the ToDoItemId
          * (which is in the console window).
          *
-         * This file should contain 2 events - 1x 'ToDoItemCreatedEvent' and 1x 'ToDoItemMarkedCompletedEvent'
+         * This record should contain 2 events - 1x 'ToDoItemCreatedEvent' and 1x 'ToDoItemMarkedCompletedEvent'
          * with details of what each event contained.
          *
-         * Now lets re-load the Aggregate from the Repository...
+         * Now lets re-load the Aggregate using the Repository...
          */
 
         System.out.println("Re-load the aggregate a second time...");
         loadAggregate(repository, toDoItemId);
-        System.out.println("This time 2 events were 're-applied' to the aggregate by the repository");
-        System.out.println("and it's state becomes 'completed'.");
+        System.out.println("This time 2 events were 're-applied' to the aggregate by the repository and the ToDoItem's state becomes 'completed'.");
+
+        System.out.println("Now let's review the contents of the Material View");
+        MaterialView.getInstance().dumpView();
+        System.out.println("The view contains no ToDo Items. Our previous ToDo Item is now shown as 'Done'.");
 
         /**
          * The console now shows the final state of the aggregate once the Created an MarkCompleted
@@ -126,20 +122,19 @@ public class ToDoItemDemoRunner {
          * 1. The Aggregate has the right ID
          * 2. The Aggregate had the right description
          * 3. The aggregate has a status of 'Completed = true'
-         *
          */
     }
 
     private static void loadAggregate(EventSourcingRepository repository, String toDoItemId) {
 
-        System.out.println("\n------------------- EVENT REPOSITORY LOAD -----------------------");
-        System.out.println("Loading Aggregate 'ToDoItem' with Id: " + toDoItemId);
-        System.out.println("Events Re-applied...");
+        System.out.println("\n------------------- LOADING AGGREGATE -----------------------");
+        System.out.println("Loading 'ToDoItem' with Id: " + toDoItemId);
+        System.out.println("Events being re-applied...");
         UnitOfWork unitOfWork = new DefaultUnitOfWorkFactory().createUnitOfWork();
         ToDoItem item = (ToDoItem) repository.load(toDoItemId);
         unitOfWork.commit();
-        System.out.println("Loaded Aggregate...");
+        System.out.println("Loaded...");
         System.out.println("ToDoItem (" + item.getId() + ") " + "'" + item.getDescription() + "' " + "Complete?: " + item.isComplete());
-        System.out.println("----------------------------------------------------------------\n");
+        System.out.println("---------------------- AGGREGATE LOADED -----------------------\n");
     }
 }

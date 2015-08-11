@@ -29,7 +29,7 @@
     <axon:cluster id="defaultCluster" default="true" >
         <axon:meta-data>
             <entry key="AMQP.Config">
-                <axon-amqp:configuration transaction-size="20000" queue-name="poc.eventstore.vrn.register.default" exclusive="false" />
+                <axon-amqp:configuration transaction-manager="transactionManager" transaction-size="20000" queue-name="poc.eventstore.vrn.register.default" exclusive="false" />
             </entry>
         </axon:meta-data>
     </axon:cluster>
@@ -41,8 +41,8 @@
 
     <bean id="serializer" class="org.axonframework.serializer.xml.XStreamSerializer" />
 
-    <axon:command-bus id="commandBus"/>
-    <axon:event-bus id="eventBus" terminal="terminal" />
+    <axon:command-bus id="commandBus" transaction-manager="transactionManager"/>
+    <axon:event-bus id="eventBus" terminal="terminal"/>
 
     <axon:event-sourcing-repository id="toDoRepository"
                                     aggregate-type="com.soagrowers.cqrs.ToDoItem"
@@ -71,6 +71,7 @@
     </bean>
 
     <bean id="eventStore" class="org.axonframework.eventstore.mongo.MongoEventStore">
+        <constructor-arg ref="serializer"/>
         <constructor-arg ref="mongoTemplate"/>
     </bean>
 
