@@ -42,11 +42,13 @@ in `sampleContext.xml` describes how all the integrated components are wired tog
 together.
 
 Once the demo has run, look in the mongodb 'cqrs' database's 'events' collection for your stored events. It should contain
-your event documents. Likewise, look in the rabbitMq console to see your message queue's metrics. It should show that messages
-were moved through the exchange / queue when the demo was run.
+your event documents. Likewise, look in the [RabbitMQ Console](http://localhost:15672) to see your message queue's metrics.
+It should show that messages did indeed flow through the `Axon.EventBus` exchange & it's associated queue when the demo was run.
 
-The `ToDoMaterialViewManager.java` is an event listener that manages the content of the simple materialised view in the
-`MaterialisedView.java` class. In CQRS, materialised views are use as the basis of a simplified means of presenting content to users
-and systems without the need to refer to the more complicated 'aggreegate root' model.
+Finally,tThe `ToDoMaterialViewManager.java` is an event listener that manages the content of the simple materialised view held in the
+`MaterialisedView.java` singleton. In CQRS, materialised views are used as the basis of queries and offer a simplified means
+of presenting information to users and systems without the need to refer to the more complicated 'aggregate root' model.
+
+For more information on CQRS and Event Sourcing, check out [Exploring CQRS and Event Sourcing by Microsoft Press](https://www.microsoft.com/en-us/download/details.aspx?id=34774).
 
 
