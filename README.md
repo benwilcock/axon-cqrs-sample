@@ -8,14 +8,14 @@ This demo aims to illustrates the following features of the platform...
 - Using MongoDb as your EventStore
 - Publishing and Subscribing to distributed events using RabbitMQ
 
-## @Before you start:
+## Before you start:
 
 1. Install [Java](http://www.oracle.com/technetwork/java/javase/downloads/index.html) and check it's working for you.
 2. Install [Maven](http://maven.apache.org) and check it's working for you.
 3. Install [RabbitMQ](https://www.rabbitmq.com) then go to the [Management Console](http://localhost:15672) and add a user called 'test' with a password of 'password'.
 4. Install [MongoDb](https://www.mongodb.org) (running locally against localhost requires no username or password)
 
-## @Test the code:
+## Run the demo:
 
 To run the sample, either execute the `ToDoItemDemoRunner.java` class in your IDE or use Maven from the command line...
 
@@ -25,7 +25,7 @@ mvn exec:java
 
 If everything is hanging together as intended, you should see a whole bunch console entries describing what has happened.
 
-## @After you finish:
+## After you finish:
 
 The `ToDoItemDemoRunner.java` demonstrates CQRS and EventSourcing using the Axon Framework. The `ToDoItem.java` class
 models the `AggregateRoot` concept for a To-Do Item (Aggregate Root is a concept taken from Domain Driven Design).
