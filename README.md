@@ -1,24 +1,50 @@
 # axon-cqrs-sample
 
-@Before:
+This sample is a simple demonstration of how to use AxonFramework (http://www/axonframework.org). This demo illustrates
+the following useful features...
+
+- Command and Query Responsibility Separation (CQRS).
+- Event Sourcing
+- MongoDb based EventStore
+- Distributed events using RabbitMQ
+
+## @Before you start:
 
 1. Install Java and check it's working for you.
 2. Install Maven 3 and check it's working for you.
 3. Install RabbitMq (http://localhost:15672) and add a 'test' user with password 'password'.
 4. Install MongoDb (running locally against localhost needs no user or password)
 
-@Test
+## @Test the code:
 
-run 'mvn exec:java'
+To run the sample, either execute the `ToDoItemDemoRunner.java` class in your IDE or use Maven...
 
-If everything is hanging together you should see some console entries explaining what has happened.
+```
+run 'mvn compile exec:java'
+```
 
-@After:
+If everything is hanging together as intended, you should see a whole bunch console entries describing what has happened.
 
-Check out the code in ToDoItem.java and in ToDoItemDemoRunner.
-Also, look at the code in the commands and events and eventhandlers packages.
-Finally check out the spring configuration in axonContext.xml to see how it's all wired together.
-Look in the mongodb 'cqrs' database's 'events' collection for your stored events. It should contain your event documents.
-Look in rabbitMq console to see your message queue's metrics. It should show messages were moved through the exchange / queue.
+## @After you finish:
+
+The `ToDoItemDemoRunner.java` demonstrates CQRS and EventSourcing using the Axon Framework. The `ToDoItem.java` class
+models the `AggregateRoot` concept for a To-Do Item (Aggregate Root is a concept taken from Domain Driven Design).
+
+The code in the `commands` & `events` packages model the commands an events from the business domain for this use case. As
+you'll discover the `CreateToDoItemCommand` causes a `ToDoItemCreatedEvent` and the `MarkCompletedCommand` causes a
+`ToDoItemCompletedEvent`. The handling of commands and the firing of events is handled by the `ToDoItem.java` aggregate root.
+
+In Axon, commands are sent to a `CommandGateway` and delivered to the 'aggregate root' by Axon. Axon takes care of storing and publishing
+any events that follow the command being handled using it's built-in 'EventRepository'. This EventRepository brings together
+MongoDb as the database persistence mechanism and RabbitMQ as the Pub/Sub mechanism for events.The spring configuration
+in `sampleContext.xml` describes how all the integrated components are wired together.
+
+Once the demo has run, look in the mongodb 'cqrs' database's 'events' collection for your stored events. It should contain
+your event documents. Likewise, look in the rabbitMq console to see your message queue's metrics. It should show that messages
+were moved through the exchange / queue when the demo was run.
+
+The `ToDoMaterialViewManager.java` is an event listener that manages the content of the simple materialised view in the
+`MaterialisedView.java` class. In CQRS, materialised views are use as the basis of a simplified means of presenting content to users
+and systems without the need to refer to the more complicated 'aggreegate root' model.
 
 
