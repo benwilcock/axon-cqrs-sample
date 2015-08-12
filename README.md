@@ -27,8 +27,9 @@ If everything is hanging together as intended, you should see a whole bunch cons
 
 ## After you finish:
 
-The `ToDoItemDemoRunner.java` demonstrates CQRS and EventSourcing using the Axon Framework. The `ToDoItem.java` class
-models the `AggregateRoot` concept for a To-Do Item (Aggregate Root is a concept taken from Domain Driven Design).
+The `ToDoItemDemoRunner.java` demonstrates CQRS and EventSourcing using the [AxonFramework](http://www.axonframework.org).
+The `ToDoItem.java` classmodels the `AggregateRoot` concept for a To-Do Item (Aggregate Root is a concept taken from
+the Domain Driven Design discipline).
 
 The code in the `commands` & `events` packages model the commands an events from the business domain for this use case. As
 you'll discover the `CreateToDoItemCommand` causes a `ToDoItemCreatedEvent` and the `MarkCompletedCommand` causes a
