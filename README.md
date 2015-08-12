@@ -28,17 +28,18 @@ If everything is hanging together as intended, you should see a whole bunch cons
 ## After you finish:
 
 The `ToDoItemDemoRunner.java` demonstrates CQRS and EventSourcing using the [AxonFramework](http://www.axonframework.org).
-The `ToDoItem.java` classmodels the `AggregateRoot` concept for a To-Do Item (Aggregate Root is a concept taken from
-the Domain Driven Design discipline).
+The `ToDoItem.java` class models the "Aggregate Root" for a To-Do Item (Aggregate Root is a concept taken from
+the Domain Driven Design discipline by Eric Evans, popular in the CQRS/ES community).
 
 The code in the `commands` & `events` packages model the commands an events from the business domain for this use case. As
 you'll discover the `CreateToDoItemCommand` causes a `ToDoItemCreatedEvent` and the `MarkCompletedCommand` causes a
-`ToDoItemCompletedEvent`. The handling of commands and the firing of events is handled by the `ToDoItem.java` aggregate root.
+`ToDoItemCompletedEvent`. The handling of commands and the firing of events is handled by the `ToDoItem` class (the 'aggregate root').
 
 In Axon, commands are sent to a `CommandGateway` and delivered to the 'aggregate root' by Axon. Axon takes care of storing and publishing
 any events that follow the command being handled using it's built-in 'EventRepository'. This EventRepository brings together
 MongoDb as the database persistence mechanism and RabbitMQ as the Pub/Sub mechanism for events.The spring configuration
-in `sampleContext.xml` describes how all the integrated components are wired together.
+in `sampleContext.xml` describes how all the integrated components are wired together. Annotations wire much of this functionality
+together.
 
 Once the demo has run, look in the mongodb 'cqrs' database's 'events' collection for your stored events. It should contain
 your event documents. Likewise, look in the rabbitMq console to see your message queue's metrics. It should show that messages
