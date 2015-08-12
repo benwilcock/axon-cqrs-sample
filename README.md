@@ -17,10 +17,10 @@ This demo aims to illustrates the following features of the platform...
 
 ## @Test the code:
 
-To run the sample, either execute the `ToDoItemDemoRunner.java` class in your IDE or use Maven...
+To run the sample, either execute the `ToDoItemDemoRunner.java` class in your IDE or use Maven from the command line...
 
 ```
-run 'mvn compile exec:java'
+mvn exec:java
 ```
 
 If everything is hanging together as intended, you should see a whole bunch console entries describing what has happened.
