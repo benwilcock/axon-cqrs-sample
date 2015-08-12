@@ -1,18 +1,18 @@
 # axon-cqrs-sample
 
-This sample is a simple demonstration of how to use AxonFramework (http://www/axonframework.org). This demo illustrates
-the following useful features...
+This sample is a simple demonstration of how to use the Java based AxonFramework for CQRS/ES http://www/axonframework.org.
+This demo aims to illustrates the following useful features...
 
 - Command and Query Responsibility Separation (CQRS).
 - Event Sourcing
-- MongoDb based EventStore
-- Distributed events using RabbitMQ
+- Using a MongoDb based EventStore
+- Offering distributed events using RabbitMQ
 
 ## @Before you start:
 
 1. Install Java and check it's working for you.
 2. Install Maven 3 and check it's working for you.
-3. Install RabbitMq (http://localhost:15672) and add a 'test' user with password 'password'.
+3. Install RabbitMq http://localhost:15672 and add a 'test' user with password 'password'.
 4. Install MongoDb (running locally against localhost needs no user or password)
 
 ## @Test the code:
