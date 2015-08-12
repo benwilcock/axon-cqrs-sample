@@ -12,7 +12,7 @@
                            http://www.axonframework.org/schema/amqp http://www.axonframework.org/schema/axon-amqp.xsd
                            ">
 
-    <rabbit:connection-factory id="amqpConnectionFactory" host="localhost" virtual-host="/"/>
+    <rabbit:connection-factory id="amqpConnectionFactory" host="localhost" virtual-host="/" username="" password=""/>
     <rabbit:template id="amqpTemplate" connection-factory="amqpConnectionFactory"/>
     <rabbit:admin connection-factory="amqpConnectionFactory"/>
     <rabbit:queue id="eventBusQueue" name="Axon.EventBus.Default" durable="true" auto-delete="false"/>
