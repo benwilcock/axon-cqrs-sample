@@ -11,9 +11,9 @@ This demo aims to illustrates the following features of the platform...
 ## @Before you start:
 
 1. Install [Java](http://www.oracle.com/technetwork/java/javase/downloads/index.html) and check it's working for you.
-2. Install [Maven](http://maven.apache.org/) and check it's working for you.
-3. Install [RabbitMQ](https://www.rabbitmq.com/), go to the [Management Console](http://localhost:15672) and add a user called 'test' with a password of 'password'.
-4. Install [MongoDb](https://www.mongodb.org/) (running locally against localhost requires no username or password)
+2. Install [Maven](http://maven.apache.org) and check it's working for you.
+3. Install [RabbitMQ](https://www.rabbitmq.com) then go to the [Management Console](http://localhost:15672) and add a user called 'test' with a password of 'password'.
+4. Install [MongoDb](https://www.mongodb.org) (running locally against localhost requires no username or password)
 
 ## @Test the code:
 
