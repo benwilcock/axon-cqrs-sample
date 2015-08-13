@@ -76,9 +76,9 @@ public class ToDoItem extends AbstractAnnotatedAggregateRoot {
      */
     @EventHandler
     public void on(ToDoItemCreatedEvent event){
-        this.id = event.getTodoId();
+        this.id = event.getToDoId();
         this.description = event.getDescription();
-        System.out.println("Event: 'ToDoItemCreated' '" + event.getDescription() + "' (" + event.getTodoId() + ") applied.");
+        System.out.println("Event: 'ToDoItemCreated' '" + event.getDescription() + "' (" + event.getToDoId() + ") applied.");
     }
 
     @CommandHandler

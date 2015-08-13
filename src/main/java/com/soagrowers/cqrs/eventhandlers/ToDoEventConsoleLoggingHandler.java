@@ -12,11 +12,11 @@ public class ToDoEventConsoleLoggingHandler {
 
     @EventHandler
     public void handle(ToDoItemCreatedEvent event) {
-        System.out.println("Listener: ToDoItemCreated: (" + event.getTodoId() + ") " + event.getDescription());
+        System.out.println("Listener: ToDoItemCreated: (" + event.getToDoId() + ") " + event.getDescription());
     }
 
     @EventHandler
     public void handle(ToDoItemCompletedEvent event) {
-        System.out.println("Listener: ToDoItemCompleted: (" + event.getTodoId() + ")");
+        System.out.println("Listener: ToDoItemCompleted: (" + event.getToDoId() + ")");
     }
 }

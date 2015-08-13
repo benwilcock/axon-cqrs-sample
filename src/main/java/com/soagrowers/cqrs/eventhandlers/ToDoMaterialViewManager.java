@@ -12,13 +12,13 @@ public class ToDoMaterialViewManager {
 
     @EventHandler
     public void handle(ToDoItemCreatedEvent event) {
-        System.out.println("MaterialView: ToDoItemCreated: (" + event.getTodoId() + ") " + event.getDescription());
-        MaterialView.getInstance().addToDo(event.getTodoId(), event.getDescription());
+        System.out.println("MaterialView: ToDoItemCreated: (" + event.getToDoId() + ") " + event.getDescription());
+        MaterialView.getInstance().addToDo(event.getToDoId(), event.getDescription());
     }
 
     @EventHandler
     public void handle(ToDoItemCompletedEvent event) {
-        System.out.println("MaterialView: ToDoItemCompleted: (" + event.getTodoId() + ")");
-        MaterialView.getInstance().changeToDone(event.getTodoId());
+        System.out.println("MaterialView: ToDoItemCompleted: (" + event.getToDoId() + ")");
+        MaterialView.getInstance().changeToDone(event.getToDoId());
     }
 }
