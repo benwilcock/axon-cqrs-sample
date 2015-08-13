@@ -3,21 +3,17 @@ package com.soagrowers.cqrs.events;
 /**
  * Created by Ben on 07/08/2015.
  */
-public class ToDoItemCreatedEvent {
+public class ToDoItemCreatedEvent extends AbstractToDoItemChangedEvent {
 
-    private final String todoId;
-    private final String description;
 
-    public ToDoItemCreatedEvent(String todoId, String description) {
-        this.todoId = todoId;
-        this.description = description;
-    }
+  private final String description;
 
-    public String getTodoId() {
-        return todoId;
-    }
+  public ToDoItemCreatedEvent(String todoId, String description) {
+    super(todoId);
+    this.description = description;
+  }
 
-    public String getDescription() {
-        return description;
-    }
+  public String getDescription() {
+    return description;
+  }
 }
