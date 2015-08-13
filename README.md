@@ -20,12 +20,12 @@ This demo aims to illustrates the following features of the platform...
 To run the sample, either execute the `ToDoItemDemoRunner.java` class in your IDE or use Maven from the command line...
 
 ```
-mvn exec:java
+mvn clean compile exec:java
 ```
 
 If everything is hanging together as intended, you should see a whole bunch console entries describing what has happened.
 
-## After you finish:
+## After running the demo:
 
 The `ToDoItemDemoRunner.java` demonstrates CQRS and EventSourcing using the [AxonFramework](http://www.axonframework.org).
 The `ToDoItem.java` class models the "Aggregate Root" for a To-Do Item (Aggregate Root is a concept taken from
