@@ -137,7 +137,7 @@ public class ToDoItemDemoRunner {
      */
     commandGateway.send(completedToDoItemCommand);
     /**
-     * This should fail with an IllegalStateException which prevents any new events from
+     * This should fail with an IllegalStateException. This prevents any new events from
      * being applied by the aggregate.
      */
   }
