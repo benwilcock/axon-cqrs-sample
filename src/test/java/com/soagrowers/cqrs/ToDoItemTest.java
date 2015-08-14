@@ -32,6 +32,15 @@ public class ToDoItemTest {
     public void testMarkToDoItemAsCompleted() throws Exception {
         fixture.given(new ToDoItemCreatedEvent("todo1", "need to implement the aggregate"))
                 .when(new MarkCompletedCommand("todo1"))
+                .expectVoidReturnType()
                 .expectEvents(new ToDoItemCompletedEvent("todo1"));
+    }
+
+    @Test
+    public void testMarkToDoItemAsCompletedTwiceFails() throws Exception {
+        fixture.given(new ToDoItemCreatedEvent("todo1", "need to implement the aggregate"),
+                new ToDoItemCompletedEvent("todo1"))
+                .when(new MarkCompletedCommand("todo1"))
+                .expectException(IllegalStateException.class);
     }
 }

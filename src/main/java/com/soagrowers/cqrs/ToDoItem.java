@@ -5,25 +5,25 @@ import com.soagrowers.cqrs.commands.MarkCompletedCommand;
 import com.soagrowers.cqrs.events.ToDoItemCompletedEvent;
 import com.soagrowers.cqrs.events.ToDoItemCreatedEvent;
 import org.axonframework.commandhandling.annotation.CommandHandler;
-import org.axonframework.eventhandling.annotation.EventHandler;
 import org.axonframework.eventsourcing.annotation.AbstractAnnotatedAggregateRoot;
 import org.axonframework.eventsourcing.annotation.AggregateIdentifier;
+import org.axonframework.eventsourcing.annotation.EventSourcingHandler;
 
 /**
  * ToDoItem is essentially a DDD AggregateRoot (from the DDD concept). In event-sourced
  * systems, Aggregates are often stored and retreived using a 'Repository'. In the
  * simplest terms, Aggregates are the sum of their applied 'Events'.
- *
+ * <p>
  * The Repository stores the aggregate's Events in an 'Event Store'. When an Aggregate
  * is re-loaded by the repository, the Repository re-applies all the stored events
  * to the aggregate thereby re-creating the logical state of the Aggregate.
- *
+ * <p>
  * The ToDoItem Aggregate can handle and react to 'Commands', and when it reacts
  * to these commands it creates and 'applies' Events that represent the logical changes
  * to be made. These Events are also handled by the ToDoItem.
- *
+ * <p>
  * Axon takes care of much of this via the CommandBus, EventBus and Repository.
- *
+ * <p>
  * Axon delivers commands placed on the bus to the Aggregate. Axon supports the 'applying' of
  * Events to the Aggregate, and the handling of those events by the aggregate or any other
  * configured EventHandlers.
@@ -58,10 +58,11 @@ public class ToDoItem extends AbstractAnnotatedAggregateRoot {
      * is 'applied' to the aggregate using the Axon 'apply' method. The apply
      * method appears to also propagate the Event to any other registered
      * 'Event Listeners', who may take further action.
+     *
      * @param command
      */
     @CommandHandler
-    public ToDoItem(CreateToDoItemCommand command){
+    public ToDoItem(CreateToDoItemCommand command) {
         System.out.println("Command: 'CreateToDoItem' received.");
         System.out.println("Event: 'ToDoItemCreated' applying...");
         apply(new ToDoItemCreatedEvent(command.getTodoId(), command.getDescription()));
@@ -72,24 +73,29 @@ public class ToDoItem extends AbstractAnnotatedAggregateRoot {
      * handle events of the specified type (ToDoItemCreatedEvent). The ToDoItemCreatedEvent can be
      * raised either by the constructor during ToDoItem(CreateToDoItemCommand) or by the
      * Repository when 're-loading' the aggregate.
+     *
      * @param event
      */
-    @EventHandler
-    public void on(ToDoItemCreatedEvent event){
+    @EventSourcingHandler
+    public void on(ToDoItemCreatedEvent event) {
         this.id = event.getToDoId();
         this.description = event.getDescription();
         System.out.println("Event: 'ToDoItemCreated' '" + event.getDescription() + "' (" + event.getToDoId() + ") applied.");
     }
 
     @CommandHandler
-    public void markCompleted(MarkCompletedCommand command){
+    public void markCompleted(MarkCompletedCommand command) {
         System.out.println("Command: 'MarkCompleted' received.");
         System.out.println("Event: 'ToDoItemCompleted' applying...");
-        apply(new ToDoItemCompletedEvent(id));
+        if(!this.isComplete()){
+            apply(new ToDoItemCompletedEvent(id));
+        } else {
+            throw new IllegalStateException("This ToDoItem ("+this.getId()+") is already Done.");
+        }
     }
 
-    @EventHandler
-    public void on(ToDoItemCompletedEvent event){
+    @EventSourcingHandler
+    public void on(ToDoItemCompletedEvent event) {
         this.isComplete = true;
         System.out.println("Event: 'ToDoItemCompleted' " + this.getDescription() + " (completed = " + this.isComplete + ") applied.");
     }

@@ -131,6 +131,15 @@ public class ToDoItemDemoRunner {
      * 2. The Aggregate had the right description
      * 3. The aggregate has a status of 'Completed = true'
      */
+
+    /**
+     * Just for a giggle, lets try and mark the ToDoItem as complete a second time...
+     */
+    commandGateway.send(completedToDoItemCommand);
+    /**
+     * This should fail with an IllegalStateException which prevents any new events from
+     * being applied by the aggregate.
+     */
   }
 
   private static void loadAggregate(EventSourcingRepository repository, String toDoItemId) {
