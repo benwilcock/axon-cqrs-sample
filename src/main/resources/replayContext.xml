@@ -1,0 +1,125 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:axon="http://www.axonframework.org/schema/core"
+       xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+       xmlns:axon-amqp="http://www.axonframework.org/schema/amqp"
+       xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.axonframework.org/schema/core http://www.axonframework.org/schema/axon-core-2.0.xsd
+                           http://www.springframework.org/schema/data/mongo
+                           http://www.springframework.org/schema/data/mongo/spring-mongo-1.0.xsd
+                           http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit-1.0.xsd
+                           http://www.axonframework.org/schema/amqp http://www.axonframework.org/schema/axon-amqp.xsd
+                           ">
+    <!--
+    <rabbit:connection-factory id="amqpConnectionFactory" host="localhost" virtual-host="/" username="test" password="password"/>
+    <rabbit:template id="amqpTemplate" connection-factory="amqpConnectionFactory"/>
+    <rabbit:admin connection-factory="amqpConnectionFactory"/>
+    <rabbit:queue id="eventBusQueue" name="Axon.EventBus.Default" durable="true" auto-delete="false"/>
+    <rabbit:fanout-exchange id="eventBusExchange" name="Axon.EventBus">
+        <rabbit:bindings>
+            <rabbit:binding queue="eventBusQueue" />
+        </rabbit:bindings>
+    </rabbit:fanout-exchange>
+
+    <axon-amqp:terminal id="terminal" exchange-name="Axon.EventBus" connection-factory="amqpConnectionFactory" serializer="serializer" transactional="true" >
+        <axon-amqp:default-configuration transaction-manager="transactionManager" transaction-size="25" prefetch="200" />
+    </axon-amqp:terminal>
+
+    <axon:cluster id="defaultCluster" default="true" >
+        <axon:meta-data>
+            <entry key="AMQP.Config">
+                <axon-amqp:configuration transaction-manager="transactionManager" transaction-size="20000" queue-name="Axon.EventBus.Default" exclusive="false" />
+            </entry>
+        </axon:meta-data>
+    </axon:cluster>
+    -->
+
+
+    <!--
+    <bean id="serializer" class="org.axonframework.serializer.xml.XStreamSerializer" />
+
+    <axon:command-bus id="commandBus" transaction-manager="transactionManager"/>
+    <axon:event-bus id="eventBus" terminal="terminal"/>
+
+    <axon:event-sourcing-repository id="toDoRepository"
+                                    aggregate-type="com.soagrowers.cqrs.ToDoItem"
+                                    event-bus="eventBus"
+                                    event-store="eventStore"/>
+
+    <axon:aggregate-command-handler id="toDoItemHandler"
+                                    aggregate-type="com.soagrowers.cqrs.ToDoItem"
+                                    repository="toDoRepository"
+                                    command-bus="commandBus"/>
+    -->
+
+    <mongo:mongo host="localhost" port="27017" />
+    <mongo:db-factory dbname="cqrs-replay" />
+
+    <bean id="mongoTemplate" class="org.axonframework.eventstore.mongo.DefaultMongoTemplate">
+        <constructor-arg index="0" ref="mongo"/>
+        <constructor-arg index="1" value="cqrs-replay"/>
+        <constructor-arg index="2" value="events"/>
+        <constructor-arg index="3" value="snapshots"/>
+        <constructor-arg index="4">
+            <null/>
+        </constructor-arg>
+        <constructor-arg index="5">
+            <null/>
+        </constructor-arg>
+    </bean>
+
+    <bean id="eventStore" class="org.axonframework.eventstore.mongo.MongoEventStore">
+        <constructor-arg ref="mongoTemplate"/>
+    </bean>
+
+    <rabbit:connection-factory id="amqpConnectionFactory" host="localhost" virtual-host="/" username="test" password="password"/>
+    <rabbit:template id="amqpTemplate" connection-factory="amqpConnectionFactory"/>
+    <rabbit:admin connection-factory="amqpConnectionFactory"/>
+    <rabbit:queue id="eventBusQueue" name="Axon.ReplayEventBus.Default" durable="true" auto-delete="false"/>
+    <rabbit:fanout-exchange id="eventBusExchange" name="Axon.ReplayEventBus">
+        <rabbit:bindings>
+            <rabbit:binding queue="eventBusQueue" />
+        </rabbit:bindings>
+    </rabbit:fanout-exchange>
+
+    <bean id="transactionManager"
+          class="org.springframework.amqp.rabbit.transaction.RabbitTransactionManager">
+        <property name="connectionFactory" ref="amqpConnectionFactory" />
+    </bean>
+
+    <!--<bean id="serializer" class="org.axonframework.serializer.xml.XStreamSerializer" />
+    <axon-amqp:terminal id="terminal" exchange-name="Axon.ReplayEventBus" connection-factory="amqpConnectionFactory"
+                        transactional="true" serializer="serializer">
+        <axon-amqp:default-configuration transaction-manager="transactionManager" transaction-size="25" prefetch="200" />
+    </axon-amqp:terminal>
+
+    <axon:cluster id="defaultCluster" default="true" >
+        <axon:meta-data>
+            <entry key="AMQP.Config">
+                <axon-amqp:configuration transaction-manager="transactionManager" transaction-size="20000"
+                                         queue-name="Axon.ReplayEventBus.Default" exclusive="false" />
+            </entry>
+        </axon:meta-data>
+    </axon:cluster>-->
+
+    <axon:cluster id="replayingCluster">
+        <!-- the next element makes this Cluster replayable  -->
+        <axon:replay-config event-store="eventStore" transaction-manager="transactionManager"/>
+        <axon:selectors>
+            <axon:package prefix="com.soagrowers.cqrs.eventhandlers"/>
+        </axon:selectors>
+        <axon:meta-data>
+            <entry key="AMQP.Config">
+                <axon-amqp:configuration transaction-manager="transactionManager" transaction-size="20000"
+                                         queue-name="Axon.ReplayEventBus.Default" exclusive="false" />
+            </entry>
+        </axon:meta-data>
+    </axon:cluster>
+
+    <axon:event-bus id="eventBus"/>
+    <axon:annotation-config />
+    <bean class="com.soagrowers.cqrs.eventhandlers.ToDoMaterialViewManager"/>
+
+
+</beans>

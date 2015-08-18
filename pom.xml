@@ -34,6 +34,11 @@
       <version>${project.spring.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <version>${project.spring.version}</version>
+    </dependency>
+    <dependency>
       <groupId>${project.axon.group}</groupId>
       <artifactId>axon-core</artifactId>
       <version>${project.axon.version}</version>

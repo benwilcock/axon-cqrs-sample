@@ -36,18 +36,31 @@ public class MaterialView {
         buf.append("ToDo Items: \n");
         for (String id : toDoItems.keySet()) {
             String desc = toDoItems.get(id);
-            buf.append("Id: " + id + ", Desc: " + desc);
+            buf.append("Id: " + id + ", Desc: " + desc + "\n");
         }
 
-        buf.append("\nDone Items: \n");
+        buf.append("Done Items: \n");
         for (String id : doneItems.keySet()) {
             String desc = doneItems.get(id);
-            buf.append("Id: " + id + ", Desc: " + desc);
+            buf.append("Id: " + id + ", Desc: " + desc + "\n");
         }
 
-        buf.append("\n---------------------");
+        buf.append("---------------------");
 
         System.out.println(buf.toString());
+    }
+
+    public void clearView(){
+        toDoItems.clear();
+        doneItems.clear();
+    }
+
+    public int getToDoCount(){
+        return toDoItems.size();
+    }
+
+    public int getDoneCount(){
+        return doneItems.size();
     }
 
 }
