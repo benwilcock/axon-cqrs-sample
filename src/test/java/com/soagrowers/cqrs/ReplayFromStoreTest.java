@@ -31,24 +31,19 @@ public class ReplayFromStoreTest {
 
     @Autowired
     private ApplicationContext context;
+    @Autowired
     private ReplayingCluster cluster;
+    @Autowired
     private MongoEventStore store;
+    @Autowired
     private Mongo mongo;
+    @Autowired
     private DefaultMongoTemplate mongoTemplate;
+
     private int numberOfToDoItems = 10;
 
     @Before
     public void setUp() {
-
-        this.cluster = context.getBean(ReplayingCluster.class);
-        this.store = context.getBean(MongoEventStore.class);
-        this.mongo = context.getBean(Mongo.class);
-        this.mongoTemplate = context.getBean(DefaultMongoTemplate.class);
-        assertNotNull(this.context);
-        assertNotNull(this.cluster);
-        assertNotNull(this.store);
-        assertNotNull(this.mongo);
-        assertNotNull(this.mongoTemplate);
 
         mongoTemplate.domainEventCollection().remove(new BasicDBObject());
         mongoTemplate.snapshotEventCollection().remove(new BasicDBObject());
