@@ -43,7 +43,7 @@ public class ToDoItemDemoRunner {
 
   }
 
-  public void run() {
+  public void run() throws InterruptedException {
 
     /**
      * Lets Demonstrate Commands triggering events and Events being dealt with
@@ -135,7 +135,10 @@ public class ToDoItemDemoRunner {
     /**
      * Just for a giggle, lets try and mark the ToDoItem as complete a second time...
      */
+    System.out.println("Expect an IllegalStateException now as we try to re-complete the same Todo...");
     commandGateway.send(completedToDoItemCommand);
+    TimeUnit.SECONDS.sleep(2l);
+    System.out.println("You should now see an IllegalStateException - as I tried to re-complete an already 'done' item!");
     /**
      * This should fail with an IllegalStateException. This prevents any new events from
      * being applied by the aggregate.
